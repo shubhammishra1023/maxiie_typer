@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>maxiie_typer — Loksewa Typing Practice</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit&family=Noto+Serif+Devanagari:wght@500;700&family=Noto+Sans+Devanagari:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F3EEE3;
+  --paper-dark:#E9E1D0;
+  --ink:#242019;
+  --ink-soft:#5b5548;
+  --red:#A63A32;
+  --red-deep:#7f2b25;
+  --brass:#B5893D;
+  --green:#2F6D3B;
+  --rule:rgba(36,32,25,0.14);
+  --card:#FBF8F1;
+  --shadow: 0 10px 30px rgba(36,32,25,0.12);
+}
+html[data-theme="dark"]{
+  --paper:#1B1915;
+  --paper-dark:#252119;
+  --ink:#EFE8D8;
+  --ink-soft:#a89f8c;
+  --red:#D9695E;
+  --red-deep:#e08a80;
+  --brass:#D6AA5C;
+  --green:#6FCB7F;
+  --rule:rgba(239,232,216,0.14);
+  --card:#221F19;
+  --shadow: 0 10px 30px rgba(0,0,0,0.4);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:
+    linear-gradient(180deg, rgba(166,58,50,0.05), transparent 200px),
+    var(--paper);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  transition:background .2s ease, color .2s ease;
+}
+.wrap{max-width:920px;margin:0 auto;padding:28px 20px 80px;}
+
+/* ---------- header ---------- */
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;gap:12px;flex-wrap:wrap;}
+.brand{display:flex;align-items:center;gap:12px;}
+.stamp{
+  width:52px;height:52px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, var(--red) 0%, var(--red-deep) 70%);
+  display:flex;align-items:center;justify-content:center;
+  color:#f3e9d8;font-family:'Noto Serif Devanagari',serif;font-weight:700;font-size:11px;
+  transform:rotate(-8deg);
+  box-shadow:0 4px 10px rgba(127,43,37,0.35), inset 0 0 0 2px rgba(255,255,255,0.15);
+  flex-shrink:0;
+  text-align:center;line-height:1.05;
+}
+.brand h1{
+  font-family:'Tiro Devanagari Sanskrit','Noto Serif Devanagari',serif;
+  font-size:28px;margin:0;letter-spacing:0.2px;color:var(--ink);
+}
+.brand p{margin:2px 0 0;font-size:12.5px;color:var(--ink-soft);letter-spacing:0.3px;}
+.badge{
+  font-size:11px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;
+  color:var(--red-deep);background:rgba(166,58,50,0.09);
+  border:1px solid rgba(166,58,50,0.25);
+  padding:6px 12px;border-radius:20px;white-space:nowrap;
+}
+
+/* ---------- card / booklet ---------- */
+.sheet{
+  background:var(--card);
+  border-radius:10px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--rule);
+  position:relative;
+  overflow:hidden;
+}
+.sheet::before{
+  content:"";position:absolute;left:46px;top:0;bottom:0;width:1px;
+  background:rgba(166,58,50,0.28);
+}
+.sheet-inner{padding:26px 26px 26px 62px;}
+@media(max-width:600px){ .sheet-inner{padding:22px 16px 22px 34px;} .sheet::before{left:20px;} }
+
+/* ---------- setup panel ---------- */
+.section-label{
+  font-size:11px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;
+  color:var(--ink-soft);margin:0 0 10px;
+}
+.row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:20px;}
+.pill-group{display:flex;gap:8px;flex-wrap:wrap;}
+.pill{
+  border:1.5px solid var(--rule);background:var(--paper);
+  color:var(--ink);padding:9px 16px;border-radius:8px;font-size:14px;font-weight:600;
+  cursor:pointer;transition:.15s ease;font-family:'Inter',sans-serif;
+}
+.pill:hover{border-color:var(--brass);}
+.pill.active{background:var(--ink);border-color:var(--ink);color:var(--paper);}
+.pill.active.lang-ne{background:var(--red-deep);border-color:var(--red-deep);}
+
+textarea.custom-paste{
+  width:100%;min-height:90px;resize:vertical;border:1.5px solid var(--rule);
+  border-radius:8px;padding:12px;font-family:'JetBrains Mono',monospace;font-size:13.5px;
+  background:#fff;color:var(--ink);line-height:1.55;
+}
+.hint{font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.5;}
+.start-btn{
+  margin-top:6px;
+  background:var(--red);color:#fdf6ec;border:none;border-radius:9px;
+  padding:14px 26px;font-size:15px;font-weight:700;letter-spacing:0.3px;
+  cursor:pointer;box-shadow:0 6px 16px rgba(166,58,50,0.28);
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+.start-btn:hover{transform:translateY(-1px);box-shadow:0 9px 20px rgba(166,58,50,0.34);}
+.start-btn:active{transform:translateY(0);}
+.start-btn:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+
+select, .time-input{
+  border:1.5px solid var(--rule);background:#fff;border-radius:8px;padding:9px 12px;
+  font-size:14px;font-family:'Inter',sans-serif;color:var(--ink);
+}
+
+/* ---------- test screen ---------- */
+.test-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px;}
+.clock{
+  font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;color:var(--ink);
+  background:var(--paper-dark);border:1px solid var(--rule);border-radius:10px;
+  padding:6px 16px;min-width:96px;text-align:center;
+}
+.clock.low{color:var(--red);border-color:rgba(166,58,50,0.4);}
+.stats-mini{display:flex;gap:16px;flex-wrap:wrap;}
+.stat-mini{text-align:right;}
+.stat-mini .n{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:18px;}
+.stat-mini .l{font-size:10.5px;text-transform:uppercase;letter-spacing:0.8px;color:var(--ink-soft);}
+
+.passage{
+  font-family:'Noto Serif Devanagari','JetBrains Mono',monospace;
+  font-size:18px;line-height:1.9;
+  background:var(--paper);border:1px solid var(--rule);border-radius:10px;
+  padding:18px 20px;margin-bottom:16px;max-height:230px;overflow-y:auto;
+  white-space:pre-wrap;word-break:break-word;
+}
+.passage.lang-en{font-family:'JetBrains Mono',monospace;font-size:16px;}
+.passage span.correct{color:var(--green);}
+.passage span.incorrect{color:var(--red);background:rgba(166,58,50,0.14);border-radius:2px;}
+.passage span.current{border-bottom:2px solid var(--brass);}
+.passage span.pending{color:var(--ink-soft);}
+
+.type-area{
+  width:100%;min-height:130px;resize:vertical;
+  border:1.5px solid var(--rule);border-radius:10px;padding:14px 16px;
+  font-family:'Noto Sans Devanagari','JetBrains Mono',monospace;font-size:17px;line-height:1.7;
+  background:#fff;color:var(--ink);
+}
+.type-area.lang-en{font-family:'JetBrains Mono',monospace;}
+.type-area:focus{outline:2px solid var(--brass);outline-offset:1px;}
+.type-area:disabled{background:var(--paper-dark);}
+
+.controls-row{display:flex;justify-content:space-between;align-items:center;margin-top:14px;flex-wrap:wrap;gap:10px;}
+.toggle{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink-soft);}
+.ghost-btn{
+  background:transparent;border:1.5px solid var(--rule);color:var(--ink);
+  padding:9px 16px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;
+}
+.ghost-btn:hover{border-color:var(--brass);}
+
+/* ---------- results ---------- */
+.results-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:18px 0;}
+@media(max-width:640px){.results-grid{grid-template-columns:repeat(2,1fr);}}
+.result-card{
+  background:var(--paper);border:1px solid var(--rule);border-radius:10px;
+  padding:16px 14px;text-align:center;
+}
+.result-card .v{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:700;}
+.result-card.hero .v{color:var(--red-deep);}
+.result-card .l{font-size:11px;text-transform:uppercase;letter-spacing:0.7px;color:var(--ink-soft);margin-top:4px;}
+
+.diff-words{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;}
+.diff-word{
+  background:rgba(166,58,50,0.09);border:1px solid rgba(166,58,50,0.25);color:var(--red-deep);
+  padding:5px 11px;border-radius:16px;font-family:'Noto Sans Devanagari','JetBrains Mono',monospace;font-size:13.5px;
+}
+
+/* ---------- reference table ---------- */
+details.ref{margin-top:26px;}
+details.ref summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--ink-soft);letter-spacing:0.3px;text-transform:uppercase;}
+table.score-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12.5px;}
+table.score-table th,table.score-table td{border:1px solid var(--rule);padding:6px 8px;text-align:center;}
+table.score-table th{background:var(--paper-dark);}
+
+.footer-note{text-align:center;color:var(--ink-soft);font-size:12px;margin-top:26px;line-height:1.6;}
+.hidden{display:none !important;}
+
+/* ---------- new: theme toggle ---------- */
+.theme-btn{
+  border:1.5px solid var(--rule);background:var(--card);color:var(--ink);
+  width:38px;height:38px;border-radius:50%;font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.theme-btn:hover{border-color:var(--brass);}
+
+/* ---------- new: best score row ---------- */
+.best-row{display:flex;gap:14px;flex-wrap:wrap;margin:2px 0 20px;}
+.best-chip{
+  background:var(--paper);border:1px solid var(--rule);border-radius:8px;
+  padding:8px 14px;font-size:12.5px;color:var(--ink-soft);
+}
+.best-chip b{color:var(--red-deep);font-family:'JetBrains Mono',monospace;font-size:15px;}
+
+/* ---------- new: history table ---------- */
+table.history-table{width:100%;border-collapse:collapse;margin-top:12px;font-size:12.5px;}
+table.history-table th,table.history-table td{border:1px solid var(--rule);padding:6px 8px;text-align:center;}
+table.history-table th{background:var(--paper-dark);}
+.history-actions{margin-top:10px;}
+
+/* ---------- new: progress bar ---------- */
+.progress-track{
+  width:100%;height:6px;border-radius:4px;background:var(--paper-dark);
+  overflow:hidden;margin-bottom:16px;
+}
+.progress-fill{
+  height:100%;width:0%;background:linear-gradient(90deg,var(--brass),var(--red));
+  transition:width .15s linear;
+}
+
+/* ---------- new: exam mode button ---------- */
+.exam-btn{
+  background:var(--ink);color:var(--paper);border:none;border-radius:8px;
+  padding:9px 16px;font-size:13.5px;font-weight:600;cursor:pointer;
+}
+.exam-btn.active{background:var(--red);}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="stamp">म्याक्सी<br>टाइप</div>
+      <div>
+        <h1>maxiie_typer</h1>
+        <p>Loksewa-style Nepali &amp; English typing practice</p>
+      </div>
+    </div>
+    <div class="badge" id="modeBadge">अभ्यास · Practice</div>
+    <button class="theme-btn" id="themeBtn" type="button" title="Toggle light/dark">🌙</button>
+  </div>
+
+  <!-- ===================== SETUP SCREEN ===================== -->
+  <div class="sheet" id="setupScreen">
+    <div class="sheet-inner">
+
+      <div class="best-row" id="bestRow"></div>
+
+      <p class="section-label">1 · भाषा छनोट (Language)</p>
+      <div class="row pill-group" id="langGroup">
+        <button class="pill lang-ne active" data-lang="ne" type="button">नेपाली (Romanized Unicode)</button>
+        <button class="pill lang-en" data-lang="en" type="button">English (US)</button>
+      </div>
+
+      <p class="section-label">2 · पाठ स्रोत (Text source)</p>
+      <div class="row pill-group" id="sourceGroup">
+        <button class="pill active" data-src="preset" type="button">Random passage</button>
+        <button class="pill" data-src="custom" type="button">Paste my own text</button>
+      </div>
+      <div id="customBox" class="hidden">
+        <textarea class="custom-paste" id="customText" placeholder="Paste the paragraph you want to practice with…"></textarea>
+        <p class="hint">Works in either language — paste Devanagari text for Nepali practice, or English text for English practice.</p>
+      </div>
+
+      <p class="section-label" id="lengthLabel">3 · पाठको लम्बाइ (Passage length)</p>
+      <div class="row pill-group" id="lengthGroup">
+        <button class="pill" data-len="short" type="button">Short (~150 words)</button>
+        <button class="pill active" data-len="standard" type="button">Standard (~350 words)</button>
+      </div>
+
+      <p class="section-label">4 · समय (Time limit)</p>
+      <div class="row">
+        <select id="timeSelect">
+          <option value="1">1 minute</option>
+          <option value="2">2 minutes</option>
+          <option value="3">3 minutes</option>
+          <option value="5" selected>5 minutes</option>
+          <option value="6">6 minutes</option>
+          <option value="10">10 minutes</option>
+        </select>
+        <label class="toggle"><input type="checkbox" id="highlightToggle" checked> Live highlight while typing</label>
+        <label class="toggle"><input type="checkbox" id="soundToggle"> 🔊 Sound on mistake</label>
+      </div>
+
+      <button class="start-btn" id="startBtn">Start typing test →</button>
+      <p class="hint" style="margin-top:14px;">Tip from Loksewa toppers: keep your eyes on the printed text, not the screen or keyboard. Type straight through — the timer keeps running even on mistakes, exactly like the real exam hall.</p>
+
+      <details class="ref" style="margin-top:18px;">
+        <summary>नेपाली रोमनाइज्ड टाइपिङ गाइड (how the Nepali phonetic keys work)</summary>
+        <p class="hint" style="margin-top:10px;">
+          Type Nepali the way it sounds using English letters — this converts it to Unicode Devanagari live, letter by letter.<br><br>
+          <b>Long vowels:</b> double the letter or capitalize — <code>aa</code>/<code>A</code> = आ/ा, <code>ee</code>/<code>I</code> = ई/ी, <code>oo</code>/<code>U</code> = ऊ/ू<br>
+          <b>Other vowels:</b> <code>i</code>=इ/ि, <code>u</code>=उ/ु, <code>e</code>=ए/े, <code>o</code>=ओ/ो, <code>ai</code>=ऐ/ै, <code>au</code>=औ/ौ<br>
+          <b>Retroflex (capital) vs dental (lowercase):</b> <code>T/Th/D/Dh/N</code> = ट/ठ/ड/ढ/ण &nbsp;·&nbsp; <code>t/th/d/dh/n</code> = त/थ/द/ध/न<br>
+          <b>Aspirates:</b> <code>kh gh chh jh ph bh</code> = ख घ छ झ फ भ<br>
+          <b>Sibilants:</b> <code>sh</code>=श, <code>S</code>=ष, <code>s</code>=स &nbsp;·&nbsp; <b>Conjuncts:</b> <code>ksh</code>=क्ष, <code>gya</code>=ज्ञ, <code>tra</code>=त्र, <code>shr</code>=श्र<br>
+          <b>Special:</b> <code>M</code>=ं (anusvar), <code>~</code>=ँ (chandrabindu), <code>.</code>=। (full stop → danda)<br><br>
+          This is a best-effort phonetic engine, not the official government layout — spellings may occasionally need a different key combination than you'd expect (e.g. <code>krishna</code> renders as क्रिश्न, not कृष्ण). Practice will make the pattern intuitive.
+        </p>
+      </details>
+
+      <details class="ref" id="historyDetails">
+        <summary>Your practice history</summary>
+        <table class="history-table" id="historyTable">
+          <thead><tr><th>Date</th><th>Lang</th><th>Net WPM</th><th>Accuracy</th><th>Errors</th><th>Duration</th></tr></thead>
+          <tbody id="historyBody"></tbody>
+        </table>
+        <p class="hint" id="historyEmpty">No attempts recorded yet on this device.</p>
+        <div class="history-actions">
+          <button class="ghost-btn" id="clearHistoryBtn">Clear history</button>
+        </div>
+        <p class="hint" style="margin-top:8px;">Stored only in this browser (localStorage) — nothing is sent anywhere.</p>
+      </details>
+    </div>
+  </div>
+
+  <!-- ===================== TEST SCREEN ===================== -->
+  <div class="sheet hidden" id="testScreen">
+    <div class="sheet-inner">
+      <div class="test-top">
+        <div class="clock" id="clock">05:00</div>
+        <div class="stats-mini" id="statsMini">
+          <div class="stat-mini"><div class="n" id="liveWpm">0</div><div class="l">WPM</div></div>
+          <div class="stat-mini"><div class="n" id="liveAcc">100%</div><div class="l">Accuracy</div></div>
+          <div class="stat-mini"><div class="n" id="liveErr">0</div><div class="l">Errors</div></div>
+        </div>
+      </div>
+
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="passage" id="passage"></div>
+
+      <textarea class="type-area" id="typeArea" rows="5" placeholder="Click here and start typing… the timer starts on your first keystroke."></textarea>
+
+      <div class="controls-row">
+        <label class="toggle"><input type="checkbox" id="highlightToggle2" checked> Live highlight</label>
+        <div style="display:flex;gap:10px;">
+          <button class="exam-btn" id="examModeBtn" type="button">📋 Exam mode</button>
+          <button class="ghost-btn" id="finishBtn">Finish now</button>
+          <button class="ghost-btn" id="restartBtn">↺ New test</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== RESULTS SCREEN ===================== -->
+  <div class="sheet hidden" id="resultsScreen">
+    <div class="sheet-inner">
+      <p class="section-label">परिणाम · Result</p>
+      <div class="results-grid">
+        <div class="result-card hero"><div class="v" id="rNet">0</div><div class="l">Net WPM</div></div>
+        <div class="result-card"><div class="v" id="rGross">0</div><div class="l">Gross WPM</div></div>
+        <div class="result-card"><div class="v" id="rAcc">0%</div><div class="l">Accuracy</div></div>
+        <div class="result-card"><div class="v" id="rErr">0</div><div class="l">Errors</div></div>
+        <div class="result-card"><div class="v" id="rChars">0</div><div class="l">Chars typed</div></div>
+        <div class="result-card"><div class="v" id="rCorrect">0</div><div class="l">Correct chars</div></div>
+        <div class="result-card"><div class="v" id="rTime">0:00</div><div class="l">Time used</div></div>
+        <div class="result-card"><div class="v" id="rLang">—</div><div class="l">Language</div></div>
+      </div>
+
+      <div id="diffBlock">
+        <p class="section-label">कठिन शब्दहरू · Words you mistyped</p>
+        <div class="diff-words" id="diffWords"></div>
+      </div>
+
+      <div class="controls-row" style="margin-top:22px;">
+        <button class="start-btn" id="retryBtn">Try again →</button>
+        <button class="ghost-btn" id="newTestBtn">Set up new test</button>
+      </div>
+
+      <details class="ref">
+        <summary>Loksewa official typing score bands (for reference)</summary>
+        <table class="score-table">
+          <thead><tr><th>Nepali CWPM</th><th>Marks</th><th>English CWPM</th><th>Marks</th></tr></thead>
+          <tbody>
+            <tr><td>&lt; 3.5</td><td>0</td><td>&lt; 4</td><td>0</td></tr>
+            <tr><td>3.5 – 6.9</td><td>1.0</td><td>4 – 7.9</td><td>0.5</td></tr>
+            <tr><td>7 – 10.4</td><td>2.0</td><td>8 – 11.9</td><td>1.0</td></tr>
+            <tr><td>10.5 – 13.9</td><td>3.0</td><td>12 – 15.9</td><td>1.5</td></tr>
+            <tr><td>14 – 17.4</td><td>4.0</td><td>16 – 19.9</td><td>2.0</td></tr>
+            <tr><td>17.5 – 20.9</td><td>5.0</td><td>20 – 23.9</td><td>2.5</td></tr>
+            <tr><td>21 – 24.4</td><td>6.0</td><td>24 – 27.9</td><td>3.0</td></tr>
+            <tr><td>24.5 – 27.9</td><td>7.0</td><td>28 – 31.9</td><td>3.5</td></tr>
+            <tr><td>28 – 31.4</td><td>8.0</td><td>32 – 35.9</td><td>4.0</td></tr>
+            <tr><td>31.5 – 34.9</td><td>9.0</td><td>36 – 39.9</td><td>4.5</td></tr>
+            <tr><td>≥ 35</td><td>10.0</td><td>≥ 40</td><td>5.0</td></tr>
+          </tbody>
+        </table>
+        <p class="hint">Directly from the PSC practical exam syllabus (Devanagari text ≈200 words / English text ≈225 words). This tool's WPM uses the standard 5-characters-per-word convention, which will run close to but not identical to the commission's own scoring on exam day.</p>
+      </details>
+    </div>
+  </div>
+
+  <p class="footer-note">Built for Loksewa Computer Operator (4th &amp; 5th level) practical exam prep. Practice daily, keep eyes on the page, and speed will follow accuracy.</p>
+</div>
+
+<script>
+/* ======================================================================
+   PASSAGE BANKS
+   ====================================================================== */
+const EN_PARAGRAPHS = [
+`Computers have become an inseparable part of modern administration, transforming the way government offices manage information and deliver services to citizens. In the early stages of computerization, most offices relied on basic word processing and simple record keeping, but today integrated digital systems handle everything from citizen registration to financial management. A computer operator in a government office is expected to be proficient in word processing, spreadsheet calculations, database management, and basic presentation tools, since these skills form the backbone of everyday administrative work. Beyond software proficiency, understanding the underlying hardware, operating systems, and network infrastructure helps an operator troubleshoot minor issues without depending entirely on technical support staff. The shift toward paperless offices has made file management and digital record keeping essential skills, as documents once stored in physical almirahs are now archived in structured digital folders that can be retrieved within seconds. Cybersecurity awareness has also become critical, since government systems often hold sensitive citizen data that must be protected from unauthorized access, malware, and phishing attempts. Simple practices such as using strong passwords, keeping antivirus software updated, and avoiding suspicious email attachments can prevent many common security incidents. Furthermore, the growing use of online portals for public service delivery means that operators must be comfortable navigating web based applications and government information systems. Typing speed and accuracy remain fundamental, because a large portion of daily work still involves drafting letters, preparing reports, and entering data accurately under time constraints. Training programs conducted by public service commissions therefore place strong emphasis on both theoretical computer knowledge and practical typing skills, recognizing that efficiency in these areas directly improves the quality of public service delivery. As digital transformation continues to reshape public administration, computer operators who combine strong fundamentals with continuous learning will remain valuable assets to any organization, bridging the gap between traditional bureaucratic processes and modern, citizen friendly digital governance.`,
+`Good governance is often described as the foundation upon which effective and accountable public administration is built. It rests on several interconnected principles, including transparency, accountability, rule of law, responsiveness, and active citizen participation in decision making processes. In any democratic system, public servants are expected to act as custodians of public trust rather than mere implementers of rules, which means their conduct must reflect fairness, integrity, and respect for the people they serve. Office management practices such as proper filing, timely correspondence, and accurate record keeping may appear routine, yet they form the operational backbone of good governance because delayed or lost documents can directly affect citizens waiting for essential services. A citizen charter, which clearly outlines the services offered by an office along with expected timelines and responsible officials, plays a significant role in building public confidence by reducing ambiguity and discouraging informal practices. Accountability mechanisms, including internal audits, public hearings, and grievance handling systems, help ensure that public resources are used efficiently and that any deviation from established procedures is identified and corrected promptly. The decentralization of authority to local governments has further strengthened governance by bringing decision making closer to the communities most affected by those decisions, allowing for services that are more responsive to local needs. At the same time, decentralization requires capable human resources at every level, which is why continuous training and skill development for civil servants remain a priority for public institutions. Digital tools have increasingly supported governance reforms by making information more accessible and reducing opportunities for arbitrary decision making, though technology alone cannot substitute for genuine commitment to ethical conduct. Ultimately, good governance is not a one time achievement but an ongoing process that depends on the collective responsibility of institutions, officials, and citizens working together toward a more transparent, efficient, and trustworthy public administration.`,
+`As organizations increasingly depend on digital systems to store and process information, cybersecurity has emerged as one of the most pressing concerns in modern computing. A security threat can take many forms, ranging from social engineering attempts that manipulate individuals into revealing confidential information, to sophisticated malware designed to disrupt systems or steal data silently in the background. Phishing remains one of the most common attack methods, where users receive seemingly legitimate emails or messages that trick them into clicking malicious links or downloading infected attachments. Once a system is compromised, the consequences can range from minor inconvenience to severe financial and reputational damage, particularly when sensitive government or personal data is exposed. Firewalls act as the first line of defense by monitoring and controlling incoming and outgoing network traffic based on predetermined security rules, while intrusion detection and prevention systems continuously watch for unusual patterns that may indicate an ongoing attack. Antivirus software remains essential for identifying and removing known threats, though it must be updated regularly to recognize newly discovered viruses and malware variants. Identity and access control mechanisms, such as strong password policies and multi factor authentication, significantly reduce the risk of unauthorized access even if login credentials are partially compromised. Email filtering systems help reduce the volume of spam and phishing attempts that reach user inboxes, lowering the overall risk of accidental exposure to malicious content. Beyond technical measures, cybersecurity awareness among employees is equally important, since even the most advanced security infrastructure can be undermined by a single careless click. Regular training sessions that teach staff to recognize suspicious activity, verify sender authenticity, and report incidents promptly can dramatically reduce an organization's vulnerability. As cyber threats continue to evolve in sophistication, maintaining a culture of vigilance, combined with updated technical safeguards and clear security policies, remains the most effective approach to protecting valuable digital assets.`,
+`Environmental conservation has become one of the defining challenges of the twenty first century, as rapid industrialization, deforestation, and pollution continue to place unprecedented pressure on natural ecosystems around the world. Climate change, driven largely by the accumulation of greenhouse gases in the atmosphere, has led to rising global temperatures, unpredictable weather patterns, and an increase in the frequency of natural disasters such as floods, droughts, and glacial lake outbursts. Mountainous regions are particularly vulnerable to these changes, since shifting temperature patterns can destabilize glaciers and alter seasonal water availability, directly affecting agriculture and drinking water supplies for millions of people downstream. The concept of sustainable development emphasizes that economic growth should not come at the expense of environmental integrity, encouraging a balanced approach where development projects account for their long term ecological impact. Renewable energy sources, particularly hydropower and solar power, offer promising alternatives to fossil fuels and can significantly reduce carbon emissions while also supporting energy independence for developing nations. Protected areas, national parks, and wildlife reserves play a crucial role in preserving biodiversity, safeguarding endangered species and their habitats from encroachment and illegal exploitation. Public awareness campaigns and environmental education programs introduced at the school level help cultivate a sense of responsibility among younger generations, ensuring that conservation values are passed down and reinforced over time. Community based initiatives, such as tree plantation drives, waste segregation programs, and local forest management committees, have proven effective in many regions by empowering local populations to take direct ownership of environmental stewardship. Government policy also plays an essential role, as regulations governing industrial emissions, waste disposal, and land use directly shape the pace and direction of environmental degradation or recovery. Ultimately, addressing environmental challenges requires coordinated efforts across government institutions, private sector organizations, and individual citizens, since no single actor can achieve meaningful and lasting ecological balance alone.`
+];
+
+const NE_PARAGRAPHS = [
+`नेपाल दक्षिण एसियाको एउटा भूपरिवेष्ठित देश हो, जसको उत्तरमा चीन र दक्षिण, पूर्व तथा पश्चिममा भारत रहेको छ। भौगोलिक दृष्टिले नेपाललाई हिमाल, पहाड र तराई गरी तीन प्रमुख भूभागमा विभाजन गरिएको छ। हिमाली क्षेत्रमा विश्वको सर्वोच्च शिखर सगरमाथा लगायत धेरै अग्ला हिमशृंखलाहरू अवस्थित छन्, जसले पर्यटकहरूलाई सधैं आकर्षित गर्दछ। पहाडी क्षेत्र कृषि, पशुपालन र सांस्कृतिक विविधताका लागि प्रसिद्ध छ भने तराई क्षेत्र उर्वर भूमि र औद्योगिक गतिविधिका लागि महत्त्वपूर्ण मानिन्छ। नेपालमा बाह्रभन्दा बढी जातजाति र थुप्रै भाषाभाषी समुदायहरू बसोबास गर्छन्, जसले यस देशलाई सांस्कृतिक विविधताको धनी बनाएको छ। संघीय लोकतान्त्रिक गणतन्त्र नेपालमा सात प्रदेश रहेका छन् र प्रत्येक प्रदेशको आफ्नै भौगोलिक तथा सांस्कृतिक विशेषता छ। कृषि नेपालको मुख्य आर्थिक आधार भए तापनि पछिल्लो समय पर्यटन, जलविद्युत् र सूचना प्रविधि क्षेत्रले पनि अर्थतन्त्रमा उल्लेखनीय योगदान पुर्‍याउन थालेको छ। नेपालका राष्ट्रिय निकुञ्ज र संरक्षित क्षेत्रहरूले जैविक विविधता संरक्षणमा महत्त्वपूर्ण भूमिका खेलेका छन्। यहाँका नदीहरू हिमालबाट उत्पत्ति भई भारततर्फ बग्छन् र यिनले सिँचाइ तथा जलविद्युत् उत्पादनमा ठूलो सहयोग पुर्‍याएका छन्। सरकारले हाल पूर्वाधार विकास, शिक्षा र स्वास्थ्य क्षेत्रमा विशेष जोड दिइरहेको छ ताकि आम नागरिकको जीवनस्तर सुधार गर्न सकियोस्। समग्रमा नेपाल प्राकृतिक सुन्दरता, सांस्कृतिक सम्पदा र ऐतिहासिक महत्त्वका दृष्टिले विश्वकै एक अनुपम राष्ट्र हो।`,
+`सुशासन भन्नाले पारदर्शिता, जवाफदेहिता र जनसहभागितामा आधारित प्रशासनिक व्यवस्थालाई बुझिन्छ। लोकतान्त्रिक शासन प्रणालीमा सुशासनको अवधारणा अत्यन्त महत्त्वपूर्ण मानिन्छ किनभने यसले सरकारी सेवा प्रवाहलाई प्रभावकारी र भरपर्दो बनाउँछ। निजामती कर्मचारीले आफ्नो दायित्व निर्वाह गर्दा नैतिकता, इमान्दारिता र व्यावसायिकता अपनाउनुपर्छ। कार्यालयमा फाइल व्यवस्थापन, पत्राचार र अभिलेख संरक्षण जस्ता कार्यहरू व्यवस्थित रूपमा सम्पन्न गर्नु सहायक कर्मचारीको प्रमुख जिम्मेवारी हो। सूचना प्रविधिको विकाससँगै सरकारी कार्यालयहरूले डिजिटल प्रणाली मार्फत सेवा प्रवाह गर्न थालेका छन्, जसले नागरिकलाई सजिलो र छिटो सेवा प्राप्त गर्न सहयोग पुर्‍याएको छ। सार्वजनिक सेवा प्रवाहमा नागरिक बडापत्रको महत्त्वपूर्ण भूमिका रहन्छ किनभने यसले सेवाग्राहीलाई सेवा प्राप्त गर्ने प्रक्रिया, समय र जिम्मेवार अधिकारीको जानकारी उपलब्ध गराउँछ। भ्रष्टाचार न्यूनीकरण, नियमानुसार कार्यसम्पादन र समयमै निर्णय प्रक्रिया सुशासनका आधारभूत तत्वहरू हुन्। संघीयताको कार्यान्वयनसँगै स्थानीय तहमा सेवा प्रवाहको जिम्मेवारी बढेको छ, जसले नजिकबाटै जनतालाई सेवा उपलब्ध गराउने अवसर सिर्जना गरेको छ। कर्मचारीतन्त्रमा क्षमता विकास, तालिम र प्रविधिमैत्री वातावरण निर्माण गर्नु आजको आवश्यकता हो। यसका साथै मानव संसाधन व्यवस्थापन, बजेट तथा लेखा प्रणालीको पारदर्शिता र लेखापरीक्षणले सार्वजनिक कोषको उचित उपयोग सुनिश्चित गर्दछ। समग्रमा सुशासन भनेको जनताप्रति उत्तरदायी, चुस्त र भरपर्दो प्रशासनिक संस्कृति निर्माण गर्ने निरन्तर प्रयास हो, जसमा सबै तहका कर्मचारीको सक्रिय सहभागिता आवश्यक हुन्छ।`,
+`कम्प्युटर आधुनिक युगको एक अपरिहार्य उपकरण बनिसकेको छ, जसले मानव जीवनका लगभग सबै क्षेत्रमा आफ्नो प्रभाव पारेको छ। सरकारी कार्यालयदेखि निजी संस्थासम्म, शिक्षादेखि स्वास्थ्यसम्म सबैतिर कम्प्युटर र सूचना प्रविधिको प्रयोग बढ्दै गएको छ। कम्प्युटर सञ्चालनका लागि हार्डवेयर र सफ्टवेयर दुवैको आवश्यक पर्दछ, जसमध्ये हार्डवेयरले भौतिक उपकरणहरूलाई जनाउँछ भने सफ्टवेयरले निर्देशनहरूको समूहलाई जनाउँछ। वर्ड प्रोसेसिङ, स्प्रेडसिट र प्रस्तुतीकरण जस्ता कार्यालय अनुप्रयोगहरूले दैनिक कार्यसम्पादनलाई सहज बनाएका छन्। डाटाबेस प्रणालीको प्रयोगले ठूलो परिमाणको सूचना व्यवस्थित रूपमा संकलन, भण्डारण र विश्लेषण गर्न सहयोग गर्दछ। साइबर सुरक्षा आजको डिजिटल युगमा अत्यन्त महत्त्वपूर्ण विषय बनेको छ किनभने डाटाको गोपनीयता र सुरक्षा सुनिश्चित नगरी कुनै पनि प्रणाली भरपर्दो हुन सक्दैन। फिसिङ, भाइरस र ह्याकिङ जस्ता साइबर खतराबाट बच्न फायरवाल, एन्टिभाइरस र नियमित सफ्टवेयर अद्यावधिक जस्ता उपायहरू अपनाउनु आवश्यक हुन्छ। सरकारले सूचना प्रविधि नीति र विद्युतीय कारोबार ऐन जस्ता कानुनी व्यवस्था मार्फत डिजिटल सेवालाई नियमन गर्दै आएको छ। नेपालमा हाल विभिन्न सरकारी सेवाहरू अनलाइन मार्फत प्रवाह हुन थालेका छन्, जसले नागरिकको समय र स्रोत दुवै बचत गरेको छ। इन्टरनेट र सामाजिक सञ्जालको व्यापक प्रयोगले सूचनाको आदानप्रदानलाई तीव्र बनाएको छ, तर यसैसँगै सही र गलत सूचना छुट्याउने क्षमता पनि आवश्यक भएको छ। समग्रमा प्रविधिको उचित प्रयोगले प्रशासनिक कार्यलाई चुस्त, पारदर्शी र नागरिकमैत्री बनाउन महत्त्वपूर्ण भूमिका खेल्दछ।`,
+`वातावरण संरक्षण वर्तमान समयको सबैभन्दा गम्भीर विश्वव्यापी चुनौतीहरूमध्ये एक हो। औद्योगिकीकरण, वन विनाश र प्रदूषणका कारण जलवायु परिवर्तनको समस्या दिनप्रतिदिन बढ्दै गएको छ। नेपाल भौगोलिक विविधताका कारण जलवायु परिवर्तनको प्रभावबाट बढी प्रभावित हुने देशहरूमध्ये पर्दछ। हिमताल फुट्ने खतरा, असामान्य वर्षा, खडेरी र बाढी जस्ता प्राकृतिक प्रकोपहरूले कृषि उत्पादन र जनजीवनमा नकारात्मक असर पारिरहेका छन्। जैविक विविधता संरक्षणका लागि राष्ट्रिय निकुञ्ज, वन्यजन्तु आरक्ष र संरक्षित क्षेत्रहरूको स्थापना गरिएको छ, जसले लोपोन्मुख वन्यजन्तु र वनस्पतिको संरक्षणमा सहयोग पुर्‍याएको छ। दिगो विकासको अवधारणाले आर्थिक वृद्धिका साथसाथै वातावरणीय संतुलन कायम राख्नुपर्ने आवश्यकतालाई जोड दिन्छ। नवीकरणीय ऊर्जाको प्रवर्द्धन, विशेषगरी जलविद्युत् र सौर्य ऊर्जाको विकासले प्रदूषण न्यूनीकरणमा महत्त्वपूर्ण योगदान पुर्‍याउन सक्दछ। सार्वजनिक यातायातको प्रवर्द्धन र प्लास्टिक प्रयोगमा नियन्त्रण जस्ता उपायहरूले पनि वातावरण संरक्षणमा सघाउ पुर्‍याउँछन्। सरकार, नागरिक समाज र निजी क्षेत्रबीचको समन्वयबिना वातावरणीय समस्याको दिगो समाधान सम्भव छैन। विद्यालय तहदेखि नै वातावरणीय शिक्षा प्रदान गर्नु आजको आवश्यकता हो ताकि आगामी पुस्ताले प्रकृतिप्रति जिम्मेवार व्यवहार अपनाउन सकोस्। जनचेतना अभिवृद्धि, वृक्षारोपण अभियान र फोहोरमैला व्यवस्थापन जस्ता स्थानीय स्तरका पहलहरूले पनि दीर्घकालमा ठूलो प्रभाव पार्न सक्छन्। समग्रमा वातावरण संरक्षण कुनै एक निकायको मात्र जिम्मेवारी नभई हामी सबैको साझा दायित्व हो।`
+];
+
+const EN_PARAGRAPHS_SHORT = [
+`Office correspondence forms the backbone of daily administrative communication in any government department. A well drafted letter should be clear, concise, and free from ambiguity, since even a small error in wording can lead to confusion or delay in service delivery. Registration and dispatch procedures ensure that every incoming and outgoing document is properly tracked, giving both the sender and receiver a reliable record of communication. Filing systems, whether physical or digital, must be organized in a way that allows quick retrieval whenever a document is needed for reference or audit. Circulars and office orders are commonly used to communicate policy decisions across departments, and every employee is expected to acknowledge and follow them promptly. Maintaining professionalism in tone and format, while keeping language simple and direct, reflects positively on the credibility of the office and builds public trust in its services.`,
+`Typing speed and accuracy are skills that improve steadily with consistent practice rather than occasional bursts of effort. Beginners often make the mistake of glancing at the keyboard while typing, which slows them down and breaks their reading rhythm. Touch typing, where fingers rest on the home row and move to other keys without looking, allows a typist to focus entirely on the source text instead of the keys. Accuracy should always be prioritized over raw speed in the early stages of practice, since correcting habitual errors later becomes far more difficult than learning the correct technique from the start. Short daily practice sessions of fifteen to twenty minutes tend to produce better long term results than infrequent long sessions. Over time, muscle memory develops naturally, and both speed and accuracy improve together without conscious effort.`
+];
+
+const NE_PARAGRAPHS_SHORT = [
+`टाइपिङ सीप निरन्तर अभ्यासबाट मात्र सुधार हुन्छ, एकैचोटि धेरै समय अभ्यास गरेर होइन। सुरुवाती चरणमा धेरैजनाले किबोर्डतर्फ हेर्ने बानी गर्छन्, जसले गर्दा गति ढिलो हुन्छ र पढ्ने प्रवाह पनि टुट्छ। औंलाहरूलाई होम रोमा राखेर हेर्नुपर्ने अवस्था नआईकनै अन्य कुञ्जीमा सार्ने अभ्यासलाई टच टाइपिङ भनिन्छ, जसले टाइपिस्टलाई किबोर्डभन्दा मुख्य पाठमा ध्यान केन्द्रित गर्न मद्दत गर्दछ। सुरुवाती चरणमा गतिभन्दा शुद्धतालाई बढी प्राथमिकता दिनुपर्छ, किनभने पछि बानी परिसकेपछि गल्ती सच्याउनु धेरै गाह्रो हुन्छ। दिनहुँ पन्ध्रदेखि बीस मिनेटसम्मको छोटो अभ्यासले लामो समयको एकैचोटि अभ्यासभन्दा राम्रो नतिजा दिन्छ। समयसँगै औंलाको सहज सञ्चालन आफैं विकसित हुन्छ र गति तथा शुद्धता दुवै सँगसँगै सुधार हुँदै जान्छ।`,
+`कार्यालयीन पत्राचार कुनै पनि सरकारी निकायको दैनिक प्रशासनिक सञ्चारको मुख्य आधार हो। राम्रोसँग लेखिएको पत्र स्पष्ट, संक्षिप्त र अस्पष्टताबाट मुक्त हुनुपर्छ, किनभने शब्द छनोटमा भएको सानो त्रुटिले पनि सेवा प्रवाहमा ढिलाइ वा भ्रम ल्याउन सक्छ। दर्ता र चलानी प्रक्रियाले प्रत्येक आगन्तुक र प्रेषित कागजातलाई व्यवस्थित रूपमा अभिलेखीकरण गर्न सहयोग गर्दछ, जसले पठाउने र प्राप्त गर्ने दुवै पक्षलाई भरपर्दो प्रमाण दिन्छ। फाइलिङ प्रणाली, चाहे भौतिक होस् वा डिजिटल, आवश्यक पर्दा तुरुन्तै फेला पार्न सकिने गरी व्यवस्थित हुनुपर्छ। परिपत्र र कार्यालय आदेशहरू विभिन्न शाखाहरूबीच नीतिगत निर्णय सम्प्रेषण गर्न प्रयोग गरिन्छ, र प्रत्येक कर्मचारीले यसलाई समयमै पालना गर्नुपर्ने अपेक्षा गरिन्छ।`
+];
+
+const VOWELS = [
+  ["au","औ","ौ"], ["ai","ऐ","ै"], ["aa","आ","ा"], ["ee","ई","ी"], ["oo","ऊ","ू"],
+  ["A","आ","ा"], ["I","ई","ी"], ["U","ऊ","ू"],
+  ["a","अ",""], ["i","इ","ि"], ["u","उ","ु"], ["e","ए","े"], ["o","ओ","ो"]
+];
+const CONSONANTS = [
+  ["ksh","क्ष"], ["gya","ज्ञ"], ["shr","श्र"], ["tra","त्र"], ["chh","छ"],
+  ["kh","ख"], ["gh","घ"], ["ng","ङ"], ["ch","च"], ["jh","झ"], ["ny","ञ"],
+  ["Th","ठ"], ["Dh","ढ"], ["th","थ"], ["dh","ध"], ["ph","फ"], ["bh","भ"], ["sh","श"],
+  ["T","ट"], ["D","ड"], ["N","ण"], ["S","ष"],
+  ["k","क"], ["g","ग"], ["j","ज"], ["t","त"], ["d","द"], ["n","न"],
+  ["p","प"], ["f","फ"], ["b","ब"], ["m","म"], ["y","य"], ["r","र"],
+  ["l","ल"], ["v","व"], ["w","व"], ["s","स"], ["h","ह"], ["x","क्ष"], ["z","ज"], ["c","च"]
+];
+// build lookup sorted longest-first
+const VOWEL_KEYS = VOWELS.map(v=>v[0]).sort((a,b)=>b.length-a.length);
+const CONS_KEYS = CONSONANTS.map(c=>c[0]).sort((a,b)=>b.length-a.length);
+const VOWEL_MAP = Object.fromEntries(VOWELS.map(v=>[v[0],{std:v[1],matra:v[2]}]));
+const CONS_MAP = Object.fromEntries(CONSONANTS.map(c=>[c[0],c[1]]));
+
+function tokenize(raw){
+  const tokens = [];
+  let i = 0;
+  while(i < raw.length){
+    const ch = raw[i];
+    if(ch === ' '){ tokens.push({type:'space'}); i++; continue; }
+    if(ch === '.'){ tokens.push({type:'lit', val:'।'}); i++; continue; }
+    if(/[0-9]/.test(ch)){ tokens.push({type:'lit', val: ch}); i++; continue; }
+    if(ch === 'M'){ tokens.push({type:'anusvar'}); i++; continue; }
+    if(ch === '~'){ tokens.push({type:'chandra'}); i++; continue; }
+    // try vowel longest match
+    let matched = false;
+    for(const key of VOWEL_KEYS){
+      if(raw.substr(i,key.length) === key){
+        tokens.push({type:'vowel', key});
+        i += key.length; matched = true; break;
+      }
+    }
+    if(matched) continue;
+    for(const key of CONS_KEYS){
+      if(raw.substr(i,key.length) === key){
+        tokens.push({type:'cons', key});
+        i += key.length; matched = true; break;
+      }
+    }
+    if(matched) continue;
+    tokens.push({type:'lit', val: ch});
+    i++;
+  }
+  return tokens;
+}
+
+function translit(raw){
+  const tokens = tokenize(raw);
+  let out = '';
+  let pendingCons = false;
+  for(const tok of tokens){
+    if(tok.type === 'vowel'){
+      const v = VOWEL_MAP[tok.key];
+      if(pendingCons){ out += v.matra; }
+      else { out += v.std; }
+      pendingCons = false;
+    } else if(tok.type === 'cons'){
+      if(pendingCons){ out += '्'; }
+      out += CONS_MAP[tok.key];
+      pendingCons = true;
+    } else if(tok.type === 'anusvar'){
+      out += 'ं'; pendingCons = false;
+    } else if(tok.type === 'chandra'){
+      out += 'ँ'; pendingCons = false;
+    } else if(tok.type === 'space'){
+      out += ' '; pendingCons = false;
+    } else if(tok.type === 'lit'){
+      out += tok.val; pendingCons = false;
+    }
+  }
+  return out;
+}
+
+/* ======================================================================
+   APP STATE
+   ====================================================================== */
+const state = {
+  lang: 'ne',
+  source: 'preset',
+  length: 'standard',
+  timeLimitSec: 300,
+  passage: '',
+  rawBuffer: '',      // raw roman keystrokes (nepali mode only)
+  typed: '',          // resulting text compared against passage
+  started: false,
+  finished: false,
+  startTime: null,
+  remaining: 300,
+  timerId: null,
+  errorsAtIndex: []
+};
+
+const el = id => document.getElementById(id);
+
+/* ---------- setup screen interactions ---------- */
+el('langGroup').addEventListener('click', e=>{
+  const btn = e.target.closest('.pill'); if(!btn) return;
+  state.lang = btn.dataset.lang;
+  [...el('langGroup').children].forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+});
+el('sourceGroup').addEventListener('click', e=>{
+  const btn = e.target.closest('.pill'); if(!btn) return;
+  state.source = btn.dataset.src;
+  [...el('sourceGroup').children].forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  el('customBox').classList.toggle('hidden', state.source !== 'custom');
+});
+el('lengthGroup').addEventListener('click', e=>{
+  const btn = e.target.closest('.pill'); if(!btn) return;
+  state.length = btn.dataset.len;
+  [...el('lengthGroup').children].forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+});
+el('startBtn').addEventListener('click', ()=>startTest());
+el('finishBtn').addEventListener('click', ()=>finishTest());
+el('restartBtn').addEventListener('click', resetToSetup);
+el('newTestBtn').addEventListener('click', resetToSetup);
+el('retryBtn').addEventListener('click', ()=>{ startTest(true); });
+el('highlightToggle2').addEventListener('change', e=>{
+  el('highlightToggle').checked = e.target.checked;
+  renderPassage();
+});
+document.addEventListener('keydown', e=>{
+  if(e.key === 'Escape' && !el('testScreen').classList.contains('hidden')){
+    resetToSetup();
+  }
+});
+
+/* ---------- theme toggle ---------- */
+const THEME_KEY = 'maxiie_typer_theme';
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  el('themeBtn').textContent = theme === 'dark' ? '☀️' : '🌙';
+}
+el('themeBtn').addEventListener('click', ()=>{
+  const current = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  localStorage.setItem(THEME_KEY, current);
+  applyTheme(current);
+});
+applyTheme(localStorage.getItem(THEME_KEY) || 'light');
+
+/* ---------- sound toggle (persisted) ---------- */
+const SOUND_KEY = 'maxiie_typer_sound';
+el('soundToggle').checked = localStorage.getItem(SOUND_KEY) === '1';
+el('soundToggle').addEventListener('change', e=>{
+  localStorage.setItem(SOUND_KEY, e.target.checked ? '1' : '0');
+});
+let audioCtx = null;
+function playErrorBeep(){
+  if(!el('soundToggle').checked) return;
+  try{
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'square';
+    osc.frequency.value = 220;
+    gain.gain.value = 0.05;
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start();
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.12);
+    osc.stop(audioCtx.currentTime + 0.13);
+  }catch(err){ /* audio unsupported — fail silently */ }
+}
+
+/* ---------- exam mode quick toggle ---------- */
+let examMode = false;
+el('examModeBtn').addEventListener('click', ()=>{
+  examMode = !examMode;
+  el('examModeBtn').classList.toggle('active', examMode);
+  el('examModeBtn').textContent = examMode ? '📋 Exam mode: ON' : '📋 Exam mode';
+  el('highlightToggle').checked = !examMode;
+  el('highlightToggle2').checked = !examMode;
+  el('statsMini').classList.toggle('hidden', examMode);
+  renderPassage();
+});
+
+/* ---------- practice history (localStorage) ---------- */
+const HISTORY_KEY = 'maxiie_typer_history';
+function loadHistory(){
+  try{ return JSON.parse(localStorage.getItem(HISTORY_KEY)) || []; }catch(e){ return []; }
+}
+function saveHistoryRecord(rec){
+  const hist = loadHistory();
+  hist.unshift(rec);
+  while(hist.length > 50) hist.pop();
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(hist));
+}
+function renderBest(){
+  const hist = loadHistory();
+  const bestOf = lang => hist.filter(h=>h.lang===lang).reduce((max,h)=> h.net>max ? h.net : max, 0);
+  const bestNe = bestOf('ne'), bestEn = bestOf('en');
+  el('bestRow').innerHTML = `
+    <div class="best-chip">Best Nepali: <b>${bestNe}</b> WPM</div>
+    <div class="best-chip">Best English: <b>${bestEn}</b> WPM</div>
+    <div class="best-chip">Attempts logged: <b>${hist.length}</b></div>`;
+}
+function renderHistory(){
+  const hist = loadHistory();
+  const body = el('historyBody');
+  body.innerHTML = '';
+  el('historyEmpty').classList.toggle('hidden', hist.length>0);
+  el('historyTable').classList.toggle('hidden', hist.length===0);
+  hist.slice(0,20).forEach(h=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${h.date}</td><td>${h.lang==='ne'?'Nepali':'English'}</td><td>${h.net}</td><td>${h.acc}%</td><td>${h.errors}</td><td>${h.duration}</td>`;
+    body.appendChild(tr);
+  });
+}
+el('clearHistoryBtn').addEventListener('click', ()=>{
+  localStorage.removeItem(HISTORY_KEY);
+  renderBest(); renderHistory();
+});
+renderBest(); renderHistory();
+
+function pickPassage(){
+  if(state.source === 'custom'){
+    const t = el('customText').value.trim();
+    if(t) return t;
+  }
+  let bank;
+  if(state.lang === 'ne'){
+    bank = state.length === 'short' ? NE_PARAGRAPHS_SHORT : NE_PARAGRAPHS;
+  } else {
+    bank = state.length === 'short' ? EN_PARAGRAPHS_SHORT : EN_PARAGRAPHS;
+  }
+  return bank[Math.floor(Math.random()*bank.length)];
+}
+
+function startTest(keepPassage){
+  state.timeLimitSec = parseInt(el('timeSelect').value,10) * 60;
+  if(!keepPassage) state.passage = pickPassage();
+  state.rawBuffer = '';
+  state.typed = '';
+  state.started = false;
+  state.finished = false;
+  state.remaining = state.timeLimitSec;
+  state.startTime = null;
+  clearInterval(state.timerId);
+
+  el('setupScreen').classList.add('hidden');
+  el('resultsScreen').classList.add('hidden');
+  el('testScreen').classList.remove('hidden');
+
+  const ta = el('typeArea');
+  ta.value = '';
+  ta.disabled = false;
+  ta.className = 'type-area ' + (state.lang==='en' ? 'lang-en' : '');
+  ta.placeholder = 'Click here and start typing… the timer starts on your first keystroke.';
+  ta.focus();
+
+  el('highlightToggle2').checked = el('highlightToggle').checked;
+  updateClock();
+  renderPassage();
+  updateLiveStats();
+}
+
+function resetToSetup(){
+  clearInterval(state.timerId);
+  el('testScreen').classList.add('hidden');
+  el('resultsScreen').classList.add('hidden');
+  el('setupScreen').classList.remove('hidden');
+}
+
+/* ---------- typing capture ---------- */
+const typeArea = el('typeArea');
+
+typeArea.addEventListener('keydown', e=>{
+  if(state.finished) { e.preventDefault(); return; }
+
+  // ignore navigation / modifier-only keys
+  const ignoreKeys = ['Tab','Shift','Control','Alt','Meta','CapsLock','Escape','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Home','End'];
+  if(ignoreKeys.includes(e.key)) return;
+
+  if(!state.started){ beginTimer(); }
+
+  if(state.lang === 'ne'){
+    e.preventDefault();
+    if(e.key === 'Backspace'){
+      state.rawBuffer = state.rawBuffer.slice(0,-1);
+    } else if(e.key === 'Enter'){
+      state.rawBuffer += ' ';
+    } else if(e.key.length === 1){
+      if(state.typed.length >= state.passage.length) return;
+      state.rawBuffer += e.key;
+    } else {
+      return;
+    }
+    const out = translit(state.rawBuffer);
+    if(out.length > state.passage.length){
+      // trim overflow so test ends exactly at passage length
+      state.rawBuffer = state.rawBuffer.slice(0, -1);
+    }
+    state.typed = translit(state.rawBuffer);
+    typeArea.value = state.typed;
+    typeArea.setSelectionRange(typeArea.value.length, typeArea.value.length);
+  } else {
+    // English: let browser handle insertion, but cap length
+    if(e.key.length === 1 && state.typed.length >= state.passage.length){
+      e.preventDefault(); return;
+    }
+  }
+
+  afterKeystroke();
+});
+
+typeArea.addEventListener('input', ()=>{
+  if(state.lang === 'en'){
+    state.typed = typeArea.value;
+    afterKeystroke();
+  }
+});
+
+function afterKeystroke(){
+  renderPassage();
+  updateLiveStats();
+  if(state.typed.length >= state.passage.length && state.passage.length > 0){
+    finishTest();
+  }
+}
+
+function beginTimer(){
+  state.started = true;
+  state.startTime = Date.now();
+  state.timerId = setInterval(tick, 250);
+}
+
+function tick(){
+  const elapsed = (Date.now() - state.startTime)/1000;
+  state.remaining = Math.max(0, state.timeLimitSec - elapsed);
+  updateClock();
+  updateLiveStats();
+  if(state.remaining <= 0){ finishTest(); }
+}
+
+function updateClock(){
+  const s = Math.ceil(state.remaining);
+  const m = Math.floor(s/60);
+  const ss = s%60;
+  const label = `${String(m).padStart(2,'0')}:${String(ss).padStart(2,'0')}`;
+  el('clock').textContent = label;
+  el('clock').classList.toggle('low', s <= 10 && state.started);
+}
+
+/* ---------- comparison / rendering ---------- */
+function computeCompare(){
+  const target = state.passage;
+  const typed = state.typed;
+  let correct = 0;
+  const perChar = [];
+  for(let i=0;i<typed.length;i++){
+    const ok = typed[i] === target[i];
+    perChar.push(ok);
+    if(ok) correct++;
+  }
+  return {correct, total: typed.length, perChar};
+}
+
+function renderPassage(){
+  const target = state.passage;
+  const typed = state.typed;
+  const showHighlight = el('highlightToggle').checked;
+  const box = el('passage');
+  box.className = 'passage ' + (state.lang==='en' ? 'lang-en' : '');
+
+  if(!target){ box.textContent=''; return; }
+
+  if(!showHighlight){
+    box.textContent = target;
+    return;
+  }
+
+  let html = '';
+  for(let i=0;i<target.length;i++){
+    const ch = target[i];
+    const safeCh = ch.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+    if(i < typed.length){
+      const cls = typed[i] === ch ? 'correct' : 'incorrect';
+      html += `<span class="${cls}">${safeCh}</span>`;
+    } else if(i === typed.length){
+      html += `<span class="current">${safeCh}</span>`;
+    } else {
+      html += `<span class="pending">${safeCh}</span>`;
+    }
+  }
+  box.innerHTML = html;
+}
+
+function elapsedMinutes(){
+  if(!state.startTime) return 0;
+  const endTime = state.finished ? (state.finishTime || Date.now()) : Date.now();
+  return Math.max((endTime - state.startTime)/60000, 1/60);
+}
+
+function updateLiveStats(){
+  const {correct, total} = computeCompare();
+  const mins = elapsedMinutes();
+  const gross = mins>0 ? (total/5)/mins : 0;
+  const errors = total - correct;
+  const net = Math.max(0, gross - (errors/Math.max(mins,1/60)));
+  const acc = total>0 ? (correct/total*100) : 100;
+
+  el('liveWpm').textContent = Math.round(net);
+  el('liveAcc').textContent = acc.toFixed(0)+'%';
+  el('liveErr').textContent = errors;
+}
+
+/* ---------- finish / results ---------- */
+function finishTest(){
+  if(state.finished) return;
+  state.finished = true;
+  state.finishTime = Date.now();
+  clearInterval(state.timerId);
+  typeArea.disabled = true;
+
+  const {correct, total} = computeCompare();
+  const mins = elapsedMinutes();
+  const gross = mins>0 ? (total/5)/mins : 0;
+  const errors = total - correct;
+  const net = Math.max(0, gross - (errors/Math.max(mins,1/60)));
+  const acc = total>0 ? (correct/total*100) : 100;
+
+  el('rNet').textContent = Math.round(net);
+  el('rGross').textContent = Math.round(gross);
+  el('rAcc').textContent = acc.toFixed(1)+'%';
+  el('rErr').textContent = errors;
+  el('rChars').textContent = total;
+  el('rCorrect').textContent = correct;
+  el('rTime').textContent = formatTime(mins*60);
+  el('rLang').textContent = state.lang==='ne' ? 'Nepali' : 'English';
+
+  renderDifficultWords();
+
+  el('testScreen').classList.add('hidden');
+  el('resultsScreen').classList.remove('hidden');
+}
+
+function formatTime(sec){
+  sec = Math.round(sec);
+  const m = Math.floor(sec/60), s = sec%60;
+  return `${m}:${String(s).padStart(2,'0')}`;
+}
+
+function renderDifficultWords(){
+  const target = state.passage;
+  const typed = state.typed;
+  const words = [];
+  let idx = 0;
+  target.split(/(\s+)/).forEach(chunk=>{
+    if(chunk.trim().length){
+      words.push({text:chunk, start:idx, end:idx+chunk.length});
+    }
+    idx += chunk.length;
+  });
+  const diff = [];
+  for(const w of words){
+    let bad = 0;
+    for(let i=w.start;i<w.end && i<typed.length;i++){
+      if(typed[i] !== target[i]) bad++;
+    }
+    if(bad>0) diff.push({text:w.text, bad});
+  }
+  diff.sort((a,b)=>b.bad-a.bad);
+  const top = diff.slice(0,10);
+  const wrap = el('diffWords');
+  wrap.innerHTML = '';
+  if(top.length===0){
+    wrap.innerHTML = '<span class="hint">No mistyped words — clean run!</span>';
+  } else {
+    top.forEach(w=>{
+      const span = document.createElement('span');
+      span.className = 'diff-word';
+      span.textContent = `${w.text} (${w.bad})`;
+      wrap.appendChild(span);
+    });
+  }
+  el('diffBlock').classList.remove('hidden');
+}
+</script>
+</body>
+</html>
